@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "bar", "cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4}, "encoding": {"tooltip": [{"field": "language", "title": "Language", "type": "nominal"}, {"field": "records_with_language", "title": "Records with Language", "type": "quantitative"}, {"field": "total_records_in_window", "title": "Total Records in Window", "type": "quantitative"}, {"field": "percentage_of_total_records", "format": ".2f", "title": "Percentage", "type": "quantitative"}], "x": {"field": "language", "sort": {"field": "percentage_of_total_records", "order": "descending"}, "title": "Language", "type": "nominal"}, "y": {"field": "percentage_of_total_records", "title": "Percentage of Total Records", "type": "quantitative"}}, "title": "RTIDDSGen Language Share of Records"}, {"mark": {"type": "text", "dy": -8, "fontSize": 11}, "encoding": {"text": {"field": "percentage_of_total_records", "format": ".1f", "type": "quantitative"}, "tooltip": [{"field": "language", "title": "Language", "type": "nominal"}, {"field": "records_with_language", "title": "Records with Language", "type": "quantitative"}, {"field": "total_records_in_window", "title": "Total Records in Window", "type": "quantitative"}, {"field": "percentage_of_total_records", "format": ".2f", "title": "Percentage", "type": "quantitative"}], "x": {"field": "language", "sort": {"field": "percentage_of_total_records", "order": "descending"}, "title": "Language", "type": "nominal"}, "y": {"field": "percentage_of_total_records", "title": "Percentage of Total Records", "type": "quantitative"}}, "title": "RTIDDSGen Language Share of Records"}], "data": {"name": "data-cf22a4e6b60fc706b4309a18c3e586ef"}, "height": 480, "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-cf22a4e6b60fc706b4309a18c3e586ef": [{"language": "cpp11stl", "records_with_language": 61, "total_records_in_window": 218, "percentage_of_total_records": 27.981651376146786, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "C", "records_with_language": 48, "total_records_in_window": 218, "percentage_of_total_records": 22.018348623853214, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "python", "records_with_language": 42, "total_records_in_window": 218, "percentage_of_total_records": 19.26605504587156, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "Cpp", "records_with_language": 34, "total_records_in_window": 218, "percentage_of_total_records": 15.59633027522936, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "CSharp", "records_with_language": 15, "total_records_in_window": 218, "percentage_of_total_records": 6.8807339449541285, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "Java", "records_with_language": 11, "total_records_in_window": 218, "percentage_of_total_records": 5.045871559633028, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}, {"language": "Ada", "records_with_language": 2, "total_records_in_window": 218, "percentage_of_total_records": 0.9174311926605505, "window_days": 180, "window_start_utc": "2025-10-18T21:10:27.062705+00:00", "window_end_utc": "2026-04-16T21:10:27.062705+00:00"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
