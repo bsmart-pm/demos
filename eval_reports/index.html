@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RTI Evaluation Telemetry Reports</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f0f4f8; color: #1f2933; }
+    header { background: #102a43; color: white; padding: 32px 40px; }
+    header h1 { margin: 0 0 8px; font-size: 32px; }
+    header p { margin: 0; font-size: 15px; opacity: 0.8; }
+    main { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .card { display: block; background: white; border: 1px solid #d9e2ec; border-radius: 12px; padding: 22px; box-shadow: 0 4px 14px rgba(15,23,42,0.06); text-decoration: none; color: inherit; transition: box-shadow 0.2s; }
+    .card:hover { box-shadow: 0 8px 28px rgba(15,23,42,0.14); }
+    .card h2 { margin: 0 0 8px; font-size: 18px; color: #102a43; }
+    .card p { margin: 0; font-size: 14px; color: #627d98; line-height: 1.5; }
+    footer { text-align: center; padding: 40px; font-size: 13px; color: #9fb3c8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RTI Evaluation Telemetry Reports</h1>
+    <p>Insights derived from the RTI Connext evaluation telemetry dataset &mdash; generated 2026-04-17 17:08 UTC</p>
+  </header>
+  <main>
+    <div class="grid">
+      <a class="card" href="../tool_adoption_funnel/"><h2>Tool Adoption Funnel</h2><p>What % of evaluators use each RTI tool and how often?</p></a><a class="card" href="../platform_distribution/"><h2>Platform Distribution</h2><p>What OS / architecture combos are evaluators running?</p></a><a class="card" href="../engagement_depth/"><h2>Engagement Depth</h2><p>How many tools does each evaluator use? Who are the power users?</p></a><a class="card" href="../dds_app_complexity/"><h2>DDS App Complexity</h2><p>How complex are the DDS systems evaluators build?</p></a><a class="card" href="../doc_support_friction/"><h2>Documentation & Support Friction</h2><p>Which docs and support URLs are accessed most?</p></a><a class="card" href="../evaluator_return_rate/"><h2>Evaluator Return Rate</h2><p>Are evaluators returning for multiple sessions or one-and-done?</p></a><a class="card" href="../language_by_platform/"><h2>Language by Platform</h2><p>Language preferences correlated with OS family.</p></a><a class="card" href="../service_adoption/"><h2>Advanced Service Adoption</h2><p>How far do evaluators go with advanced services?</p></a>
+    </div>
+  </main>
+  <footer>Generated from cache/TELEMETRY_DB.json &mdash; RTI ut_frontend</footer>
+</body>
+</html>
