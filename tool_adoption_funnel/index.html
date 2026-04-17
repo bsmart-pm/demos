@@ -17,19 +17,276 @@
         .chart { min-height: 520px; width: 100%; max-width: 100%; min-width: 0; }
         .summary { margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: #334e68; }
         .vega-embed, .vega-embed > div { width: 100% !important; max-width: 100% !important; }
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border: 1px solid #d9e2ec; border-radius: 10px; padding: 12px; margin: 0 0 16px; background: #f8fbff; }
+    .filter-bar .group { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .filter-bar label { font-size: 13px; color: #334e68; }
+    .filter-bar input[type="date"] { border: 1px solid #bcccdc; border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+    .filter-bar button { border: 1px solid #829ab1; background: #ffffff; color: #102a43; border-radius: 6px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
+    .filter-bar button:hover { background: #f0f4f8; }
+    .filter-bar button.active { background: #102a43; color: #ffffff; border-color: #102a43; }
+    .filter-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge { display: inline-block; border-radius: 999px; font-size: 12px; padding: 4px 10px; border: 1px solid #bcccdc; color: #334e68; background: #ffffff; }
+    .badge.primary { border-color: #102a43; color: #102a43; font-weight: 600; }
+    .badge.warn { border-color: #f0b429; color: #8d2b0b; background: #fffbea; }
         @media (max-width: 768px) { body { margin: 12px; } .grid { gap: 16px; } .panel { padding: 12px; } }
     </style>
 </head>
 <body>
     <h1>RTI Evaluation — Tool Adoption Funnel</h1>
-    <p class="meta">Total evaluation installs: 1,323  |  Source: cache/TELEMETRY_DB.json</p>
+    <p class="meta">Total evaluation installs: 9  |  Source: cache/TELEMETRY_DB.json</p>
+    <section class="filter-bar" aria-label="Date Filter Controls">
+      <div class="group">
+        <label>Presets:</label>
+        <button type="button" data-preset="7d">7d</button>
+        <button type="button" data-preset="30d">30d</button>
+        <button type="button" data-preset="90d">90d</button>
+        <button type="button" data-preset="all" class="active">All</button>
+      </div>
+      <div class="group">
+        <label for="from-date">From</label>
+        <input id="from-date" type="date" />
+        <label for="to-date">To</label>
+        <input id="to-date" type="date" />
+      </div>
+      <div class="group">
+        <button id="apply-custom" type="button">Apply</button>
+        <button id="reset-filter" type="button">Reset</button>
+      </div>
+    </section>
+    <div class="filter-badges">
+      <span id="badge-range" class="badge primary">Range: all-time</span>
+      <span id="badge-count" class="badge">Records: 0</span>
+      <span id="badge-missing" class="badge warn" style="display:none;">Missing time rows excluded: 0</span>
+    </div>
     <div class="grid">
-        <section class="panel"><h2>Adoption Rate</h2><div id="chart-a" class="chart"></div><p class="summary">RTI Launcher is the most-used tool at 79.7%, followed by RTIDDSGen at 45.6%. Tools further down the list represent deeper engagement beyond initial setup. Use this to identify where evaluators stop and what the cloud platform must prioritize.</p></section>
+        <section class="panel"><h2>Adoption Rate</h2><div id="chart-a" class="chart"></div><p class="summary">RTIDDSGen is the most-used tool at 77.8%, followed by RTI Launcher at 55.6%. Tools further down the list represent deeper engagement beyond initial setup. Use this to identify where evaluators stop and what the cloud platform must prioritize.</p></section>
 <section class="panel"><h2>Usage Intensity Among Adopters</h2><div id="chart-b" class="chart"></div><p class="summary">Among users who did use each tool, the median number of times they launched it. High values indicate tools users return to repeatedly rather than try once — strong signal of importance in the evaluation journey.</p></section>
     </div>
     <script>
-        vegaEmbed("#chart-a", {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "bar", "color": "#1f77b4", "cornerRadiusBottomRight": 4, "cornerRadiusTopRight": 4}, "encoding": {"tooltip": [{"field": "tool_name", "title": "Tool", "type": "nominal"}, {"field": "users_who_used", "title": "Users", "type": "quantitative"}, {"field": "total_users", "title": "Total Records", "type": "quantitative"}, {"field": "adoption_pct", "format": ".1f", "title": "Adoption %", "type": "quantitative"}], "x": {"field": "adoption_pct", "scale": {"domain": [0, 100]}, "title": "% of Users Who Used This Tool", "type": "quantitative"}, "y": {"field": "tool_name", "sort": ["RTI Launcher", "RTIDDSGen", "Admin Console", "DDS Spy", "RTI Monitor", "DDS Ping", "Shapes Demo", "Routing Service", "Recording Service", "Cloud Discovery Svc", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Svc", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "color": "#334e68", "dx": 6, "fontSize": 11}, "encoding": {"text": {"field": "adoption_pct", "format": ".1f", "type": "quantitative"}, "x": {"field": "adoption_pct", "type": "quantitative"}, "y": {"field": "tool_name", "sort": ["RTI Launcher", "RTIDDSGen", "Admin Console", "DDS Spy", "RTI Monitor", "DDS Ping", "Shapes Demo", "Routing Service", "Recording Service", "Cloud Discovery Svc", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Svc", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "type": "nominal"}}}], "data": {"name": "data-69164c105ce8174fbbe89fac94555052"}, "height": 540, "title": "Adoption Rate by Tool (% of all users)", "width": "container", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-69164c105ce8174fbbe89fac94555052": [{"tool_key": "rtilauncher", "tool_name": "RTI Launcher", "users_who_used": 1054, "total_users": 1323, "adoption_pct": 79.67, "median_uses_among_adopters": 2.0}, {"tool_key": "rtiddsgen", "tool_name": "RTIDDSGen", "users_who_used": 603, "total_users": 1323, "adoption_pct": 45.58, "median_uses_among_adopters": 7.0}, {"tool_key": "rtiadminconsole", "tool_name": "Admin Console", "users_who_used": 355, "total_users": 1323, "adoption_pct": 26.83, "median_uses_among_adopters": 4.0}, {"tool_key": "rtiddsspy", "tool_name": "DDS Spy", "users_who_used": 273, "total_users": 1323, "adoption_pct": 20.63, "median_uses_among_adopters": 2.0}, {"tool_key": "rtimonitor", "tool_name": "RTI Monitor", "users_who_used": 180, "total_users": 1323, "adoption_pct": 13.61, "median_uses_among_adopters": 2.0}, {"tool_key": "rtiddsping", "tool_name": "DDS Ping", "users_who_used": 176, "total_users": 1323, "adoption_pct": 13.3, "median_uses_among_adopters": 3.0}, {"tool_key": "rtishapesdemo", "tool_name": "Shapes Demo", "users_who_used": 148, "total_users": 1323, "adoption_pct": 11.19, "median_uses_among_adopters": 3.0}, {"tool_key": "rtiroutingservice", "tool_name": "Routing Service", "users_who_used": 135, "total_users": 1323, "adoption_pct": 10.2, "median_uses_among_adopters": 5.0}, {"tool_key": "rtirecordingservice", "tool_name": "Recording Service", "users_who_used": 109, "total_users": 1323, "adoption_pct": 8.24, "median_uses_among_adopters": 3.0}, {"tool_key": "rticlouddiscoveryservice", "tool_name": "Cloud Discovery Svc", "users_who_used": 108, "total_users": 1323, "adoption_pct": 8.16, "median_uses_among_adopters": 1.0}, {"tool_key": "rtireplayservice", "tool_name": "Replay Service", "users_who_used": 105, "total_users": 1323, "adoption_pct": 7.94, "median_uses_among_adopters": 3.0}, {"tool_key": "rtisystemdesigner", "tool_name": "System Designer", "users_who_used": 101, "total_users": 1323, "adoption_pct": 7.63, "median_uses_among_adopters": 2.0}, {"tool_key": "rtipersistenceservice", "tool_name": "Persistence Service", "users_who_used": 92, "total_users": 1323, "adoption_pct": 6.95, "median_uses_among_adopters": 4.0}, {"tool_key": "rticonverter", "tool_name": "Converter", "users_who_used": 89, "total_users": 1323, "adoption_pct": 6.73, "median_uses_among_adopters": 3.0}, {"tool_key": "rtiddsgen_server", "tool_name": "DDSGen Server", "users_who_used": 52, "total_users": 1323, "adoption_pct": 3.93, "median_uses_among_adopters": 2.5}, {"tool_key": "rtiwebintegrationservice", "tool_name": "Web Integration Svc", "users_who_used": 27, "total_users": 1323, "adoption_pct": 2.04, "median_uses_among_adopters": 2.0}, {"tool_key": "rtixmlconverter", "tool_name": "XML Converter", "users_who_used": 7, "total_users": 1323, "adoption_pct": 0.53, "median_uses_among_adopters": 1.0}, {"tool_key": "rtiddsprototyper", "tool_name": "DDS Prototyper", "users_who_used": 4, "total_users": 1323, "adoption_pct": 0.3, "median_uses_among_adopters": 1.0}, {"tool_key": "rtirtc_mysql", "tool_name": "RTC MySQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "median_uses_among_adopters": 1.0}, {"tool_key": "rtirtc_postgresql", "tool_name": "RTC PostgreSQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "median_uses_among_adopters": 1.0}]}}, {"actions": false});
-vegaEmbed("#chart-b", {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "bar", "color": "#ff7f0e", "cornerRadiusBottomRight": 4, "cornerRadiusTopRight": 4}, "encoding": {"tooltip": [{"field": "tool_name", "title": "Tool", "type": "nominal"}, {"field": "median_uses_among_adopters", "format": ".1f", "title": "Median Uses", "type": "quantitative"}, {"field": "users_who_used", "title": "Users Who Used", "type": "quantitative"}], "x": {"field": "median_uses_among_adopters", "title": "Median Times Used (among adopters)", "type": "quantitative"}, "y": {"field": "tool_name", "sort": ["RTI Launcher", "RTIDDSGen", "Admin Console", "DDS Spy", "RTI Monitor", "DDS Ping", "Shapes Demo", "Routing Service", "Recording Service", "Cloud Discovery Svc", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Svc", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "color": "#334e68", "dx": 6, "fontSize": 11}, "encoding": {"text": {"field": "median_uses_among_adopters", "format": ".1f", "type": "quantitative"}, "x": {"field": "median_uses_among_adopters", "type": "quantitative"}, "y": {"field": "tool_name", "sort": ["RTI Launcher", "RTIDDSGen", "Admin Console", "DDS Spy", "RTI Monitor", "DDS Ping", "Shapes Demo", "Routing Service", "Recording Service", "Cloud Discovery Svc", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Svc", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "type": "nominal"}}}], "data": {"name": "data-69164c105ce8174fbbe89fac94555052"}, "height": 540, "title": "Median Usage Count Among Adopters", "width": "container", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-69164c105ce8174fbbe89fac94555052": [{"tool_key": "rtilauncher", "tool_name": "RTI Launcher", "users_who_used": 1054, "total_users": 1323, "adoption_pct": 79.67, "median_uses_among_adopters": 2.0}, {"tool_key": "rtiddsgen", "tool_name": "RTIDDSGen", "users_who_used": 603, "total_users": 1323, "adoption_pct": 45.58, "median_uses_among_adopters": 7.0}, {"tool_key": "rtiadminconsole", "tool_name": "Admin Console", "users_who_used": 355, "total_users": 1323, "adoption_pct": 26.83, "median_uses_among_adopters": 4.0}, {"tool_key": "rtiddsspy", "tool_name": "DDS Spy", "users_who_used": 273, "total_users": 1323, "adoption_pct": 20.63, "median_uses_among_adopters": 2.0}, {"tool_key": "rtimonitor", "tool_name": "RTI Monitor", "users_who_used": 180, "total_users": 1323, "adoption_pct": 13.61, "median_uses_among_adopters": 2.0}, {"tool_key": "rtiddsping", "tool_name": "DDS Ping", "users_who_used": 176, "total_users": 1323, "adoption_pct": 13.3, "median_uses_among_adopters": 3.0}, {"tool_key": "rtishapesdemo", "tool_name": "Shapes Demo", "users_who_used": 148, "total_users": 1323, "adoption_pct": 11.19, "median_uses_among_adopters": 3.0}, {"tool_key": "rtiroutingservice", "tool_name": "Routing Service", "users_who_used": 135, "total_users": 1323, "adoption_pct": 10.2, "median_uses_among_adopters": 5.0}, {"tool_key": "rtirecordingservice", "tool_name": "Recording Service", "users_who_used": 109, "total_users": 1323, "adoption_pct": 8.24, "median_uses_among_adopters": 3.0}, {"tool_key": "rticlouddiscoveryservice", "tool_name": "Cloud Discovery Svc", "users_who_used": 108, "total_users": 1323, "adoption_pct": 8.16, "median_uses_among_adopters": 1.0}, {"tool_key": "rtireplayservice", "tool_name": "Replay Service", "users_who_used": 105, "total_users": 1323, "adoption_pct": 7.94, "median_uses_among_adopters": 3.0}, {"tool_key": "rtisystemdesigner", "tool_name": "System Designer", "users_who_used": 101, "total_users": 1323, "adoption_pct": 7.63, "median_uses_among_adopters": 2.0}, {"tool_key": "rtipersistenceservice", "tool_name": "Persistence Service", "users_who_used": 92, "total_users": 1323, "adoption_pct": 6.95, "median_uses_among_adopters": 4.0}, {"tool_key": "rticonverter", "tool_name": "Converter", "users_who_used": 89, "total_users": 1323, "adoption_pct": 6.73, "median_uses_among_adopters": 3.0}, {"tool_key": "rtiddsgen_server", "tool_name": "DDSGen Server", "users_who_used": 52, "total_users": 1323, "adoption_pct": 3.93, "median_uses_among_adopters": 2.5}, {"tool_key": "rtiwebintegrationservice", "tool_name": "Web Integration Svc", "users_who_used": 27, "total_users": 1323, "adoption_pct": 2.04, "median_uses_among_adopters": 2.0}, {"tool_key": "rtixmlconverter", "tool_name": "XML Converter", "users_who_used": 7, "total_users": 1323, "adoption_pct": 0.53, "median_uses_among_adopters": 1.0}, {"tool_key": "rtiddsprototyper", "tool_name": "DDS Prototyper", "users_who_used": 4, "total_users": 1323, "adoption_pct": 0.3, "median_uses_among_adopters": 1.0}, {"tool_key": "rtirtc_mysql", "tool_name": "RTC MySQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "median_uses_among_adopters": 1.0}, {"tool_key": "rtirtc_postgresql", "tool_name": "RTC PostgreSQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "median_uses_among_adopters": 1.0}]}}, {"actions": false});
+        function unixToDateInput(ts) {
+      if (ts == null) return "";
+      const d = new Date(ts * 1000);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(d.getUTCDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function dateInputToUnixStart(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T00:00:00Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function dateInputToUnixEnd(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T23:59:59Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function prettyRange(fromUnix, toUnix) {
+      if (fromUnix == null && toUnix == null) return "all-time";
+      const f = fromUnix == null ? "-inf" : unixToDateInput(fromUnix);
+      const t = toUnix == null ? "+inf" : unixToDateInput(toUnix);
+      return `${f} to ${t}`;
+    }
+
+    function overlap(start, end, fromUnix, toUnix) {
+      const left = fromUnix == null ? -1e18 : fromUnix;
+      const right = toUnix == null ? 1e18 : toUnix;
+      return end >= left && start <= right;
+    }
+
+    function presetRange(preset) {
+      if (preset === "all") return { fromUnix: null, toUnix: null };
+      const now = Math.floor(Date.now() / 1000);
+      if (preset === "7d") return { fromUnix: now - (7 * 86400), toUnix: now };
+      if (preset === "30d") return { fromUnix: now - (30 * 86400), toUnix: now };
+      if (preset === "90d") return { fromUnix: now - (90 * 86400), toUnix: now };
+      return { fromUnix: null, toUnix: null };
+    }
+
+    function initDateFilter(records, onFiltered) {
+      const fromInput = document.getElementById("from-date");
+      const toInput = document.getElementById("to-date");
+      const applyBtn = document.getElementById("apply-custom");
+      const resetBtn = document.getElementById("reset-filter");
+      const presetBtns = Array.from(document.querySelectorAll("button[data-preset]"));
+      const badgeRange = document.getElementById("badge-range");
+      const badgeCount = document.getElementById("badge-count");
+      const badgeMissing = document.getElementById("badge-missing");
+
+      function setActivePreset(preset) {
+        presetBtns.forEach((btn) => {
+          if (btn.dataset.preset === preset) btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+      }
+
+      function run(fromUnix, toUnix, sourcePreset) {
+        const bounded = !(fromUnix == null && toUnix == null);
+        let missing = 0;
+        const out = [];
+        for (const r of records) {
+          const s = r.eval_start_unix;
+          const e = r.eval_end_unix;
+          if (s == null || e == null) {
+            missing += 1;
+            if (!bounded) out.push(r);
+            continue;
+          }
+          if (overlap(s, e, fromUnix, toUnix)) out.push(r);
+        }
+
+        badgeRange.textContent = `Range: ${prettyRange(fromUnix, toUnix)}`;
+        badgeCount.textContent = `Records: ${out.length} of ${records.length}`;
+        if (bounded) {
+          badgeMissing.style.display = "inline-block";
+          badgeMissing.textContent = `Missing time rows excluded: ${missing}`;
+        } else {
+          badgeMissing.style.display = "none";
+        }
+
+        if (sourcePreset) {
+          setActivePreset(sourcePreset);
+          if (sourcePreset !== "all") {
+            fromInput.value = unixToDateInput(fromUnix);
+            toInput.value = unixToDateInput(toUnix);
+          }
+        } else {
+          setActivePreset("");
+        }
+
+        onFiltered(out, { fromUnix, toUnix, missing });
+      }
+
+      presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const preset = btn.dataset.preset || "all";
+          const range = presetRange(preset);
+          run(range.fromUnix, range.toUnix, preset);
+        });
+      });
+
+      applyBtn.addEventListener("click", () => {
+        const fromUnix = dateInputToUnixStart(fromInput.value);
+        const toUnix = dateInputToUnixEnd(toInput.value);
+        run(fromUnix, toUnix, null);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        fromInput.value = "";
+        toInput.value = "";
+        run(null, null, "all");
+      });
+
+      run(null, null, "all");
+    }
+        
+        
+      const TOOL_DEFS = [{"tool_key": "rtilauncher", "tool_name": "RTI Launcher"}, {"tool_key": "rtishapesdemo", "tool_name": "Shapes Demo"}, {"tool_key": "rtiddsgen", "tool_name": "RTIDDSGen"}, {"tool_key": "rtiadminconsole", "tool_name": "Admin Console"}, {"tool_key": "rtiddsspy", "tool_name": "DDS Spy"}, {"tool_key": "rtimonitor", "tool_name": "RTI Monitor"}, {"tool_key": "rtiddsping", "tool_name": "DDS Ping"}, {"tool_key": "rtiddsgen_server", "tool_name": "DDSGen Server"}, {"tool_key": "rtiddsprototyper", "tool_name": "DDS Prototyper"}, {"tool_key": "rtirecordingservice", "tool_name": "Recording Service"}, {"tool_key": "rtireplayservice", "tool_name": "Replay Service"}, {"tool_key": "rtiroutingservice", "tool_name": "Routing Service"}, {"tool_key": "rtipersistenceservice", "tool_name": "Persistence Service"}, {"tool_key": "rtiwebintegrationservice", "tool_name": "Web Integration Svc"}, {"tool_key": "rticlouddiscoveryservice", "tool_name": "Cloud Discovery Svc"}, {"tool_key": "rtirtc_mysql", "tool_name": "RTC MySQL"}, {"tool_key": "rtirtc_postgresql", "tool_name": "RTC PostgreSQL"}, {"tool_key": "rticonverter", "tool_name": "Converter"}, {"tool_key": "rtixmlconverter", "tool_name": "XML Converter"}, {"tool_key": "rtisystemdesigner", "tool_name": "System Designer"}];
+      const BASE_RECORDS = [{"eval_start_unix": 1775855325, "eval_end_unix": 1775941801, "counts": {"rtilauncher": 0, "rtishapesdemo": 0, "rtiddsgen": 5, "rtiadminconsole": 4, "rtiddsspy": 0, "rtimonitor": 4, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 6, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1776155572, "eval_end_unix": 1776155572, "counts": {"rtilauncher": 0, "rtishapesdemo": 0, "rtiddsgen": 1, "rtiadminconsole": 0, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1760513207, "eval_end_unix": 1776355756, "counts": {"rtilauncher": 15, "rtishapesdemo": 0, "rtiddsgen": 2, "rtiadminconsole": 0, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1768928950, "eval_end_unix": 1776263971, "counts": {"rtilauncher": 21, "rtishapesdemo": 0, "rtiddsgen": 0, "rtiadminconsole": 30, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1776154868, "eval_end_unix": 1776154868, "counts": {"rtilauncher": 0, "rtishapesdemo": 0, "rtiddsgen": 1, "rtiadminconsole": 0, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1776058598, "eval_end_unix": 1776090351, "counts": {"rtilauncher": 2, "rtishapesdemo": 0, "rtiddsgen": 8, "rtiadminconsole": 2, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1718033177, "eval_end_unix": 1776330489, "counts": {"rtilauncher": 18, "rtishapesdemo": 0, "rtiddsgen": 17, "rtiadminconsole": 8, "rtiddsspy": 2, "rtimonitor": 2, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 8}}, {"eval_start_unix": 1776345665, "eval_end_unix": 1776345665, "counts": {"rtilauncher": 1, "rtishapesdemo": 0, "rtiddsgen": 0, "rtiadminconsole": 0, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}, {"eval_start_unix": 1776362814, "eval_end_unix": 1776362814, "counts": {"rtilauncher": 0, "rtishapesdemo": 0, "rtiddsgen": 1, "rtiadminconsole": 0, "rtiddsspy": 0, "rtimonitor": 0, "rtiddsping": 0, "rtiddsgen_server": 0, "rtiddsprototyper": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtiroutingservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0}}];
+
+      function median(nums) {
+        if (!nums.length) return 0;
+        const a = [...nums].sort((x, y) => x - y);
+        const mid = Math.floor(a.length / 2);
+        return a.length % 2 === 0 ? (a[mid - 1] + a[mid]) / 2 : a[mid];
+      }
+
+      function buildToolRows(filtered) {
+        const total = filtered.length;
+        return TOOL_DEFS.map((t) => {
+          const usage = filtered.map((r) => (r.counts && r.counts[t.tool_key]) ? r.counts[t.tool_key] : 0);
+          const nonzero = usage.filter((x) => x > 0);
+          const users = nonzero.length;
+          const pct = total > 0 ? (users / total) * 100 : 0;
+          return {
+            tool_key: t.tool_key,
+            tool_name: t.tool_name,
+            users_who_used: users,
+            total_users: total,
+            adoption_pct: Math.round(pct * 100) / 100,
+            median_uses_among_adopters: Math.round(median(nonzero) * 10) / 10,
+          };
+        }).sort((a, b) => b.adoption_pct - a.adoption_pct);
+      }
+
+      function renderFiltered(filtered) {
+        const toolRows = buildToolRows(filtered);
+        const toolOrder = toolRows.map((r) => r.tool_name);
+        const adopterRows = toolRows.filter((r) => r.users_who_used > 0);
+        const adopterOrder = adopterRows.map((r) => r.tool_name);
+
+        const chartA = {
+          $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+          width: "container",
+          height: 540,
+          title: "Adoption Rate by Tool (% of all users)",
+          layer: [
+            {
+              mark: {type: "bar", color: "#1f77b4", cornerRadiusTopRight: 4, cornerRadiusBottomRight: 4},
+              encoding: {
+                y: {field: "tool_name", type: "nominal", sort: toolOrder, title: null},
+                x: {field: "adoption_pct", type: "quantitative", title: "% of Users Who Used This Tool", scale: {domain: [0, 100]}},
+                tooltip: [
+                  {field: "tool_name", title: "Tool"},
+                  {field: "users_who_used", title: "Users"},
+                  {field: "total_users", title: "Total Records"},
+                  {field: "adoption_pct", title: "Adoption %", format: ".1f"},
+                ],
+              },
+            },
+            {
+              mark: {type: "text", dx: 6, fontSize: 11, color: "#334e68"},
+              encoding: {
+                y: {field: "tool_name", type: "nominal", sort: toolOrder},
+                x: {field: "adoption_pct", type: "quantitative"},
+                text: {field: "adoption_pct", type: "quantitative", format: ".1f"},
+              },
+            },
+          ],
+          data: {values: toolRows},
+        };
+
+        const chartB = {
+          $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+          width: "container",
+          height: 540,
+          title: "Median Usage Count Among Adopters",
+          layer: [
+            {
+              mark: {type: "bar", color: "#ff7f0e", cornerRadiusTopRight: 4, cornerRadiusBottomRight: 4},
+              encoding: {
+                y: {field: "tool_name", type: "nominal", sort: adopterOrder, title: null},
+                x: {field: "median_uses_among_adopters", type: "quantitative", title: "Median Times Used (among adopters)"},
+                tooltip: [
+                  {field: "tool_name", title: "Tool"},
+                  {field: "median_uses_among_adopters", title: "Median Uses", format: ".1f"},
+                  {field: "users_who_used", title: "Users Who Used"},
+                ],
+              },
+            },
+            {
+              mark: {type: "text", dx: 6, fontSize: 11, color: "#334e68"},
+              encoding: {
+                y: {field: "tool_name", type: "nominal", sort: adopterOrder},
+                x: {field: "median_uses_among_adopters", type: "quantitative"},
+                text: {field: "median_uses_among_adopters", type: "quantitative", format: ".1f"},
+              },
+            },
+          ],
+          data: {values: adopterRows},
+        };
+
+        vegaEmbed("#chart-a", chartA, {actions: false});
+        vegaEmbed("#chart-b", chartB, {actions: false});
+      }
+
+      initDateFilter(BASE_RECORDS, renderFiltered);
+    
     </script>
 </body>
 </html>

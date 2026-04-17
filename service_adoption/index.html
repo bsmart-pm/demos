@@ -17,19 +17,279 @@
         .chart { min-height: 420px; width: 100%; max-width: 100%; min-width: 0; }
         .summary { margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: #334e68; }
         .vega-embed, .vega-embed > div { width: 100% !important; max-width: 100% !important; }
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border: 1px solid #d9e2ec; border-radius: 10px; padding: 12px; margin: 0 0 16px; background: #f8fbff; }
+    .filter-bar .group { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .filter-bar label { font-size: 13px; color: #334e68; }
+    .filter-bar input[type="date"] { border: 1px solid #bcccdc; border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+    .filter-bar button { border: 1px solid #829ab1; background: #ffffff; color: #102a43; border-radius: 6px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
+    .filter-bar button:hover { background: #f0f4f8; }
+    .filter-bar button.active { background: #102a43; color: #ffffff; border-color: #102a43; }
+    .filter-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge { display: inline-block; border-radius: 999px; font-size: 12px; padding: 4px 10px; border: 1px solid #bcccdc; color: #334e68; background: #ffffff; }
+    .badge.primary { border-color: #102a43; color: #102a43; font-weight: 600; }
+    .badge.warn { border-color: #f0b429; color: #8d2b0b; background: #fffbea; }
         @media (max-width: 768px) { body { margin: 12px; } .grid { gap: 16px; } .panel { padding: 12px; } }
     </style>
 </head>
 <body>
     <h1>RTI Evaluation — Advanced Service Adoption</h1>
-    <p class="meta">Total evaluation installs: 1,323  |  Source: cache/TELEMETRY_DB.json</p>
+    <p class="meta">Total evaluation installs: 25  |  Source: cache/TELEMETRY_DB.json</p>
+    <section class="filter-bar" aria-label="Date Filter Controls">
+      <div class="group">
+        <label>Presets:</label>
+        <button type="button" data-preset="7d">7d</button>
+        <button type="button" data-preset="30d">30d</button>
+        <button type="button" data-preset="90d">90d</button>
+        <button type="button" data-preset="all" class="active">All</button>
+      </div>
+      <div class="group">
+        <label for="from-date">From</label>
+        <input id="from-date" type="date" />
+        <label for="to-date">To</label>
+        <input id="to-date" type="date" />
+      </div>
+      <div class="group">
+        <button id="apply-custom" type="button">Apply</button>
+        <button id="reset-filter" type="button">Reset</button>
+      </div>
+    </section>
+    <div class="filter-badges">
+      <span id="badge-range" class="badge primary">Range: all-time</span>
+      <span id="badge-count" class="badge">Records: 0</span>
+      <span id="badge-missing" class="badge warn" style="display:none;">Missing time rows excluded: 0</span>
+    </div>
     <div class="grid">
-        <section class="panel"><h2>Service Adoption Rate</h2><div id="chart-a" class="chart"></div><p class="summary"><strong>DDS Ping</strong> is the most-adopted advanced service at 13.3% of evaluation users. Only 14 of 14 tracked services have any adoption. Services with very low adoption are strong candidates to surface more prominently in the cloud evaluation platform through guided workflows.</p></section>
+        <section class="panel"><h2>Service Adoption Rate</h2><div id="chart-a" class="chart"></div><p class="summary"><strong>Persistence Service</strong> is the most-adopted advanced service at 16.0% of evaluation users. Only 9 of 14 tracked services have any adoption. Services with very low adoption are strong candidates to surface more prominently in the cloud evaluation platform through guided workflows.</p></section>
 <section class="panel"><h2>Session Time Among Adopters</h2><div id="chart-b" class="chart"></div><p class="summary">For services with any adoption, the mean avg_sec value (reported by the telemetry) scaled to minutes. Services with long session times but low adoption are high-value but high-friction — prime targets for pre-configured cloud sandbox environments that skip the setup pain.</p></section>
     </div>
     <script>
-        vegaEmbed("#chart-a", {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "bar", "color": "#1f77b4", "cornerRadiusBottomRight": 4, "cornerRadiusTopRight": 4}, "encoding": {"tooltip": [{"field": "service_name", "title": "Service", "type": "nominal"}, {"field": "users_who_used", "title": "Users", "type": "quantitative"}, {"field": "total_users", "title": "Total Records", "type": "quantitative"}, {"field": "adoption_pct", "format": ".2f", "title": "Adoption %", "type": "quantitative"}], "x": {"field": "adoption_pct", "scale": {"domain": [0, 15.3]}, "title": "% of All Users Who Used This Service", "type": "quantitative"}, "y": {"field": "service_name", "sort": ["DDS Ping", "Routing Service", "Recording Service", "Cloud Discovery Service", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Service", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "color": "#334e68", "dx": 6, "fontSize": 10}, "encoding": {"text": {"field": "adoption_pct", "format": ".1f", "type": "quantitative"}, "x": {"field": "adoption_pct", "type": "quantitative"}, "y": {"field": "service_name", "sort": ["DDS Ping", "Routing Service", "Recording Service", "Cloud Discovery Service", "Replay Service", "System Designer", "Persistence Service", "Converter", "DDSGen Server", "Web Integration Service", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "type": "nominal"}}}], "data": {"name": "data-6de5387b621a2bc425b602f0d96285bd"}, "height": 420, "title": "Service Adoption Rate (% of all users)", "width": "container", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-6de5387b621a2bc425b602f0d96285bd": [{"service_key": "rtiddsping", "service_name": "DDS Ping", "users_who_used": 176, "total_users": 1323, "adoption_pct": 13.3, "mean_avg_sec_among_adopters": 588.6, "mean_avg_min_among_adopters": 9.81}, {"service_key": "rtiroutingservice", "service_name": "Routing Service", "users_who_used": 135, "total_users": 1323, "adoption_pct": 10.2, "mean_avg_sec_among_adopters": 102.8, "mean_avg_min_among_adopters": 1.71}, {"service_key": "rtirecordingservice", "service_name": "Recording Service", "users_who_used": 109, "total_users": 1323, "adoption_pct": 8.24, "mean_avg_sec_among_adopters": 53.6, "mean_avg_min_among_adopters": 0.89}, {"service_key": "rticlouddiscoveryservice", "service_name": "Cloud Discovery Service", "users_who_used": 108, "total_users": 1323, "adoption_pct": 8.16, "mean_avg_sec_among_adopters": 61.8, "mean_avg_min_among_adopters": 1.03}, {"service_key": "rtireplayservice", "service_name": "Replay Service", "users_who_used": 105, "total_users": 1323, "adoption_pct": 7.94, "mean_avg_sec_among_adopters": 58.6, "mean_avg_min_among_adopters": 0.98}, {"service_key": "rtisystemdesigner", "service_name": "System Designer", "users_who_used": 101, "total_users": 1323, "adoption_pct": 7.63, "mean_avg_sec_among_adopters": 5302.5, "mean_avg_min_among_adopters": 88.38}, {"service_key": "rtipersistenceservice", "service_name": "Persistence Service", "users_who_used": 92, "total_users": 1323, "adoption_pct": 6.95, "mean_avg_sec_among_adopters": 33.1, "mean_avg_min_among_adopters": 0.55}, {"service_key": "rticonverter", "service_name": "Converter", "users_who_used": 89, "total_users": 1323, "adoption_pct": 6.73, "mean_avg_sec_among_adopters": 1.3, "mean_avg_min_among_adopters": 0.02}, {"service_key": "rtiddsgen_server", "service_name": "DDSGen Server", "users_who_used": 52, "total_users": 1323, "adoption_pct": 3.93, "mean_avg_sec_among_adopters": 46.2, "mean_avg_min_among_adopters": 0.77}, {"service_key": "rtiwebintegrationservice", "service_name": "Web Integration Service", "users_who_used": 27, "total_users": 1323, "adoption_pct": 2.04, "mean_avg_sec_among_adopters": 56711.3, "mean_avg_min_among_adopters": 945.19}, {"service_key": "rtixmlconverter", "service_name": "XML Converter", "users_who_used": 7, "total_users": 1323, "adoption_pct": 0.53, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtiddsprototyper", "service_name": "DDS Prototyper", "users_who_used": 4, "total_users": 1323, "adoption_pct": 0.3, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtirtc_mysql", "service_name": "RTC MySQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtirtc_postgresql", "service_name": "RTC PostgreSQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}]}}, {"actions": false});
-vegaEmbed("#chart-b", {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "bar", "color": "#ff7f0e", "cornerRadiusBottomRight": 4, "cornerRadiusTopRight": 4}, "encoding": {"tooltip": [{"field": "service_name", "title": "Service", "type": "nominal"}, {"field": "mean_avg_min_among_adopters", "format": ".1f", "title": "Mean Minutes", "type": "quantitative"}, {"field": "users_who_used", "title": "Users Who Used", "type": "quantitative"}], "x": {"field": "mean_avg_min_among_adopters", "title": "Mean Session Time Among Adopters (minutes)", "type": "quantitative"}, "y": {"field": "service_name", "sort": ["Web Integration Service", "System Designer", "DDS Ping", "Routing Service", "Cloud Discovery Service", "Replay Service", "Recording Service", "DDSGen Server", "Persistence Service", "Converter", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "color": "#334e68", "dx": 6, "fontSize": 10}, "encoding": {"text": {"field": "mean_avg_min_among_adopters", "format": ".1f", "type": "quantitative"}, "x": {"field": "mean_avg_min_among_adopters", "type": "quantitative"}, "y": {"field": "service_name", "sort": ["Web Integration Service", "System Designer", "DDS Ping", "Routing Service", "Cloud Discovery Service", "Replay Service", "Recording Service", "DDSGen Server", "Persistence Service", "Converter", "XML Converter", "DDS Prototyper", "RTC MySQL", "RTC PostgreSQL"], "type": "nominal"}}}], "data": {"name": "data-6de5387b621a2bc425b602f0d96285bd"}, "height": 420, "title": "Mean Session Time Among Service Adopters (minutes)", "width": "container", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-6de5387b621a2bc425b602f0d96285bd": [{"service_key": "rtiddsping", "service_name": "DDS Ping", "users_who_used": 176, "total_users": 1323, "adoption_pct": 13.3, "mean_avg_sec_among_adopters": 588.6, "mean_avg_min_among_adopters": 9.81}, {"service_key": "rtiroutingservice", "service_name": "Routing Service", "users_who_used": 135, "total_users": 1323, "adoption_pct": 10.2, "mean_avg_sec_among_adopters": 102.8, "mean_avg_min_among_adopters": 1.71}, {"service_key": "rtirecordingservice", "service_name": "Recording Service", "users_who_used": 109, "total_users": 1323, "adoption_pct": 8.24, "mean_avg_sec_among_adopters": 53.6, "mean_avg_min_among_adopters": 0.89}, {"service_key": "rticlouddiscoveryservice", "service_name": "Cloud Discovery Service", "users_who_used": 108, "total_users": 1323, "adoption_pct": 8.16, "mean_avg_sec_among_adopters": 61.8, "mean_avg_min_among_adopters": 1.03}, {"service_key": "rtireplayservice", "service_name": "Replay Service", "users_who_used": 105, "total_users": 1323, "adoption_pct": 7.94, "mean_avg_sec_among_adopters": 58.6, "mean_avg_min_among_adopters": 0.98}, {"service_key": "rtisystemdesigner", "service_name": "System Designer", "users_who_used": 101, "total_users": 1323, "adoption_pct": 7.63, "mean_avg_sec_among_adopters": 5302.5, "mean_avg_min_among_adopters": 88.38}, {"service_key": "rtipersistenceservice", "service_name": "Persistence Service", "users_who_used": 92, "total_users": 1323, "adoption_pct": 6.95, "mean_avg_sec_among_adopters": 33.1, "mean_avg_min_among_adopters": 0.55}, {"service_key": "rticonverter", "service_name": "Converter", "users_who_used": 89, "total_users": 1323, "adoption_pct": 6.73, "mean_avg_sec_among_adopters": 1.3, "mean_avg_min_among_adopters": 0.02}, {"service_key": "rtiddsgen_server", "service_name": "DDSGen Server", "users_who_used": 52, "total_users": 1323, "adoption_pct": 3.93, "mean_avg_sec_among_adopters": 46.2, "mean_avg_min_among_adopters": 0.77}, {"service_key": "rtiwebintegrationservice", "service_name": "Web Integration Service", "users_who_used": 27, "total_users": 1323, "adoption_pct": 2.04, "mean_avg_sec_among_adopters": 56711.3, "mean_avg_min_among_adopters": 945.19}, {"service_key": "rtixmlconverter", "service_name": "XML Converter", "users_who_used": 7, "total_users": 1323, "adoption_pct": 0.53, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtiddsprototyper", "service_name": "DDS Prototyper", "users_who_used": 4, "total_users": 1323, "adoption_pct": 0.3, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtirtc_mysql", "service_name": "RTC MySQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}, {"service_key": "rtirtc_postgresql", "service_name": "RTC PostgreSQL", "users_who_used": 1, "total_users": 1323, "adoption_pct": 0.08, "mean_avg_sec_among_adopters": 0.0, "mean_avg_min_among_adopters": 0.0}]}}, {"actions": false});
+        function unixToDateInput(ts) {
+      if (ts == null) return "";
+      const d = new Date(ts * 1000);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(d.getUTCDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function dateInputToUnixStart(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T00:00:00Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function dateInputToUnixEnd(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T23:59:59Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function prettyRange(fromUnix, toUnix) {
+      if (fromUnix == null && toUnix == null) return "all-time";
+      const f = fromUnix == null ? "-inf" : unixToDateInput(fromUnix);
+      const t = toUnix == null ? "+inf" : unixToDateInput(toUnix);
+      return `${f} to ${t}`;
+    }
+
+    function overlap(start, end, fromUnix, toUnix) {
+      const left = fromUnix == null ? -1e18 : fromUnix;
+      const right = toUnix == null ? 1e18 : toUnix;
+      return end >= left && start <= right;
+    }
+
+    function presetRange(preset) {
+      if (preset === "all") return { fromUnix: null, toUnix: null };
+      const now = Math.floor(Date.now() / 1000);
+      if (preset === "7d") return { fromUnix: now - (7 * 86400), toUnix: now };
+      if (preset === "30d") return { fromUnix: now - (30 * 86400), toUnix: now };
+      if (preset === "90d") return { fromUnix: now - (90 * 86400), toUnix: now };
+      return { fromUnix: null, toUnix: null };
+    }
+
+    function initDateFilter(records, onFiltered) {
+      const fromInput = document.getElementById("from-date");
+      const toInput = document.getElementById("to-date");
+      const applyBtn = document.getElementById("apply-custom");
+      const resetBtn = document.getElementById("reset-filter");
+      const presetBtns = Array.from(document.querySelectorAll("button[data-preset]"));
+      const badgeRange = document.getElementById("badge-range");
+      const badgeCount = document.getElementById("badge-count");
+      const badgeMissing = document.getElementById("badge-missing");
+
+      function setActivePreset(preset) {
+        presetBtns.forEach((btn) => {
+          if (btn.dataset.preset === preset) btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+      }
+
+      function run(fromUnix, toUnix, sourcePreset) {
+        const bounded = !(fromUnix == null && toUnix == null);
+        let missing = 0;
+        const out = [];
+        for (const r of records) {
+          const s = r.eval_start_unix;
+          const e = r.eval_end_unix;
+          if (s == null || e == null) {
+            missing += 1;
+            if (!bounded) out.push(r);
+            continue;
+          }
+          if (overlap(s, e, fromUnix, toUnix)) out.push(r);
+        }
+
+        badgeRange.textContent = `Range: ${prettyRange(fromUnix, toUnix)}`;
+        badgeCount.textContent = `Records: ${out.length} of ${records.length}`;
+        if (bounded) {
+          badgeMissing.style.display = "inline-block";
+          badgeMissing.textContent = `Missing time rows excluded: ${missing}`;
+        } else {
+          badgeMissing.style.display = "none";
+        }
+
+        if (sourcePreset) {
+          setActivePreset(sourcePreset);
+          if (sourcePreset !== "all") {
+            fromInput.value = unixToDateInput(fromUnix);
+            toInput.value = unixToDateInput(toUnix);
+          }
+        } else {
+          setActivePreset("");
+        }
+
+        onFiltered(out, { fromUnix, toUnix, missing });
+      }
+
+      presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const preset = btn.dataset.preset || "all";
+          const range = presetRange(preset);
+          run(range.fromUnix, range.toUnix, preset);
+        });
+      });
+
+      applyBtn.addEventListener("click", () => {
+        const fromUnix = dateInputToUnixStart(fromInput.value);
+        const toUnix = dateInputToUnixEnd(toInput.value);
+        run(fromUnix, toUnix, null);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        fromInput.value = "";
+        toInput.value = "";
+        run(null, null, "all");
+      });
+
+      run(null, null, "all");
+    }
+        
+        
+      const SERVICE_DEFS = [{"service_key": "rtiroutingservice", "service_name": "Routing Service"}, {"service_key": "rtirecordingservice", "service_name": "Recording Service"}, {"service_key": "rtireplayservice", "service_name": "Replay Service"}, {"service_key": "rtipersistenceservice", "service_name": "Persistence Service"}, {"service_key": "rtiwebintegrationservice", "service_name": "Web Integration Service"}, {"service_key": "rticlouddiscoveryservice", "service_name": "Cloud Discovery Service"}, {"service_key": "rtirtc_mysql", "service_name": "RTC MySQL"}, {"service_key": "rtirtc_postgresql", "service_name": "RTC PostgreSQL"}, {"service_key": "rtiddsgen_server", "service_name": "DDSGen Server"}, {"service_key": "rticonverter", "service_name": "Converter"}, {"service_key": "rtixmlconverter", "service_name": "XML Converter"}, {"service_key": "rtisystemdesigner", "service_name": "System Designer"}, {"service_key": "rtiddsprototyper", "service_name": "DDS Prototyper"}, {"service_key": "rtiddsping", "service_name": "DDS Ping"}];
+      const BASE_RECORDS = [{"eval_start_unix": 1775226272, "eval_end_unix": 1775226685, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775842785, "eval_end_unix": 1775842800, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775855325, "eval_end_unix": 1775941801, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 6, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 1903.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775690264, "eval_end_unix": 1775690286, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775035416, "eval_end_unix": 1775035416, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1776155572, "eval_end_unix": 1776155572, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1760513207, "eval_end_unix": 1776355756, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775374960, "eval_end_unix": 1775374960, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1768928950, "eval_end_unix": 1776263971, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775736496, "eval_end_unix": 1775737171, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1776154868, "eval_end_unix": 1776154868, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775351260, "eval_end_unix": 1775357065, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1776058598, "eval_end_unix": 1776090351, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1772239067, "eval_end_unix": 1775078093, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775759256, "eval_end_unix": 1775764180, "counts": {"rtiroutingservice": 4, "rtirecordingservice": 3, "rtireplayservice": 3, "rtipersistenceservice": 20, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 3, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 1, "rticonverter": 3, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 3}, "avg_secs": {"rtiroutingservice": 3.0, "rtirecordingservice": 29.0, "rtireplayservice": 52.0, "rtipersistenceservice": 5.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 121.0, "rticonverter": 1.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 1.0}}, {"eval_start_unix": 1775492563, "eval_end_unix": 1775571038, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775592104, "eval_end_unix": 1775598018, "counts": {"rtiroutingservice": 4, "rtirecordingservice": 3, "rtireplayservice": 3, "rtipersistenceservice": 20, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 3, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 3, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 3}, "avg_secs": {"rtiroutingservice": 2.0, "rtirecordingservice": 28.0, "rtireplayservice": 51.0, "rtipersistenceservice": 4.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 1.0}}, {"eval_start_unix": 1718033177, "eval_end_unix": 1776330489, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 8, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 153.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1762513237, "eval_end_unix": 1775043736, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775037162, "eval_end_unix": 1775808719, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 14, "rtiddsprototyper": 0, "rtiddsping": 1}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 300.0, "rtiddsprototyper": 0.0, "rtiddsping": 2.0}}, {"eval_start_unix": 1776345665, "eval_end_unix": 1776345665, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775588016, "eval_end_unix": 1775588016, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1775667893, "eval_end_unix": 1775673777, "counts": {"rtiroutingservice": 4, "rtirecordingservice": 3, "rtireplayservice": 3, "rtipersistenceservice": 20, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 3, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 1, "rticonverter": 3, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 3}, "avg_secs": {"rtiroutingservice": 3.0, "rtirecordingservice": 28.0, "rtireplayservice": 52.0, "rtipersistenceservice": 4.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 121.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 1.0}}, {"eval_start_unix": 1775377880, "eval_end_unix": 1775540542, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}, {"eval_start_unix": 1776362814, "eval_end_unix": 1776362814, "counts": {"rtiroutingservice": 0, "rtirecordingservice": 0, "rtireplayservice": 0, "rtipersistenceservice": 0, "rtiwebintegrationservice": 0, "rticlouddiscoveryservice": 0, "rtirtc_mysql": 0, "rtirtc_postgresql": 0, "rtiddsgen_server": 0, "rticonverter": 0, "rtixmlconverter": 0, "rtisystemdesigner": 0, "rtiddsprototyper": 0, "rtiddsping": 0}, "avg_secs": {"rtiroutingservice": 0.0, "rtirecordingservice": 0.0, "rtireplayservice": 0.0, "rtipersistenceservice": 0.0, "rtiwebintegrationservice": 0.0, "rticlouddiscoveryservice": 0.0, "rtirtc_mysql": 0.0, "rtirtc_postgresql": 0.0, "rtiddsgen_server": 0.0, "rticonverter": 0.0, "rtixmlconverter": 0.0, "rtisystemdesigner": 0.0, "rtiddsprototyper": 0.0, "rtiddsping": 0.0}}];
+
+      function mean(nums) {
+        if (!nums.length) return 0;
+        return nums.reduce((a, b) => a + b, 0) / nums.length;
+      }
+
+      function buildServiceRows(filtered) {
+        const total = filtered.length;
+        return SERVICE_DEFS.map((s) => {
+          const counts = filtered.map((r) => (r.counts && r.counts[s.service_key]) ? r.counts[s.service_key] : 0);
+          const avgSecs = filtered
+            .filter((r) => (r.counts && r.counts[s.service_key] > 0))
+            .map((r) => (r.avg_secs && r.avg_secs[s.service_key]) ? r.avg_secs[s.service_key] : 0);
+          const users = counts.filter((x) => x > 0).length;
+          const pct = total > 0 ? (users / total) * 100 : 0;
+          const meanSec = mean(avgSecs);
+          return {
+            service_key: s.service_key,
+            service_name: s.service_name,
+            users_who_used: users,
+            total_users: total,
+            adoption_pct: Math.round(pct * 100) / 100,
+            mean_avg_sec_among_adopters: Math.round(meanSec * 10) / 10,
+            mean_avg_min_among_adopters: Math.round((meanSec / 60) * 100) / 100,
+          };
+        }).sort((a, b) => b.adoption_pct - a.adoption_pct);
+      }
+
+      function renderFiltered(filtered) {
+        const rows = buildServiceRows(filtered);
+        const svcOrder = rows.map((r) => r.service_name);
+        const adopters = rows.filter((r) => r.users_who_used > 0);
+        const timeOrder = [...adopters].sort((a, b) => b.mean_avg_min_among_adopters - a.mean_avg_min_among_adopters).map((r) => r.service_name);
+        const maxPct = rows.length ? Math.max(...rows.map((r) => r.adoption_pct)) : 0;
+
+        const chartA = {
+          $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+          width: "container",
+          height: 420,
+          title: "Service Adoption Rate (% of all users)",
+          layer: [
+            {
+              mark: {type: "bar", color: "#1f77b4", cornerRadiusTopRight: 4, cornerRadiusBottomRight: 4},
+              encoding: {
+                y: {field: "service_name", type: "nominal", sort: svcOrder, title: null},
+                x: {field: "adoption_pct", type: "quantitative", title: "% of All Users Who Used This Service", scale: {domain: [0, Math.max(maxPct + 2, 5)]}},
+                tooltip: [
+                  {field: "service_name", title: "Service"},
+                  {field: "users_who_used", title: "Users"},
+                  {field: "total_users", title: "Total Records"},
+                  {field: "adoption_pct", title: "Adoption %", format: ".2f"},
+                ],
+              },
+            },
+            {
+              mark: {type: "text", dx: 6, fontSize: 10, color: "#334e68"},
+              encoding: {
+                y: {field: "service_name", type: "nominal", sort: svcOrder},
+                x: {field: "adoption_pct", type: "quantitative"},
+                text: {field: "adoption_pct", type: "quantitative", format: ".1f"},
+              },
+            },
+          ],
+          data: {values: rows},
+        };
+
+        const chartB = {
+          $schema: "https://vega.github.io/schema/vega-lite/v6.1.0.json",
+          width: "container",
+          height: 420,
+          title: "Mean Session Time Among Service Adopters (minutes)",
+          layer: [
+            {
+              mark: {type: "bar", color: "#ff7f0e", cornerRadiusTopRight: 4, cornerRadiusBottomRight: 4},
+              encoding: {
+                y: {field: "service_name", type: "nominal", sort: timeOrder, title: null},
+                x: {field: "mean_avg_min_among_adopters", type: "quantitative", title: "Mean Session Time Among Adopters (minutes)"},
+                tooltip: [
+                  {field: "service_name", title: "Service"},
+                  {field: "mean_avg_min_among_adopters", title: "Mean Minutes", format: ".1f"},
+                  {field: "users_who_used", title: "Users Who Used"},
+                ],
+              },
+            },
+            {
+              mark: {type: "text", dx: 6, fontSize: 10, color: "#334e68"},
+              encoding: {
+                y: {field: "service_name", type: "nominal", sort: timeOrder},
+                x: {field: "mean_avg_min_among_adopters", type: "quantitative"},
+                text: {field: "mean_avg_min_among_adopters", type: "quantitative", format: ".1f"},
+              },
+            },
+          ],
+          data: {values: adopters},
+        };
+
+        vegaEmbed("#chart-a", chartA, {actions: false});
+        vegaEmbed("#chart-b", chartB, {actions: false});
+      }
+
+      initDateFilter(BASE_RECORDS, renderFiltered);
+    
     </script>
 </body>
 </html>
