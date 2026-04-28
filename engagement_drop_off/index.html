@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RTI Evaluation — Engagement Drop-Off Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 24px; color: #1f2933; background: #ffffff; max-width: 100%; overflow-x: hidden; }
+        h1 { margin-bottom: 4px; font-size: 28px; }
+        .meta { font-size: 13px; color: #627d98; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 24px; align-items: start; }
+        .panel { border: 1px solid #d9e2ec; border-radius: 12px; padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); min-width: 0; overflow: hidden; box-sizing: border-box; }
+        .panel h2 { margin: 0 0 12px; font-size: 20px; }
+        .chart { min-height: 360px; width: 100%; max-width: 100%; min-width: 0; }
+        .summary { margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: #334e68; }
+        .vega-embed, .vega-embed > div { width: 100% !important; max-width: 100% !important; }
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border: 1px solid #d9e2ec; border-radius: 10px; padding: 12px; margin: 0 0 16px; background: #f8fbff; }
+    .filter-bar .group { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .filter-bar label { font-size: 13px; color: #334e68; }
+    .filter-bar input[type="date"] { border: 1px solid #bcccdc; border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+    .filter-bar button { border: 1px solid #829ab1; background: #ffffff; color: #102a43; border-radius: 6px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
+    .filter-bar button:hover { background: #f0f4f8; }
+    .filter-bar button.active { background: #102a43; color: #ffffff; border-color: #102a43; }
+    .filter-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge { display: inline-block; border-radius: 999px; font-size: 12px; padding: 4px 10px; border: 1px solid #bcccdc; color: #334e68; background: #ffffff; }
+    .badge.primary { border-color: #102a43; color: #102a43; font-weight: 600; }
+    .badge.warn { border-color: #f0b429; color: #8d2b0b; background: #fffbea; }
+        @media (max-width: 768px) { body { margin: 12px; } .grid { gap: 16px; } .panel { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <h1>RTI Evaluation — Engagement Drop-Off Analysis</h1>
+    <p class="meta">Total evaluators: 1,340  |  Source: cache/TELEMETRY_DB.json</p>
+    <section class="filter-bar" aria-label="Date Filter Controls">
+      <div class="group">
+        <label>Presets:</label>
+        <button type="button" data-preset="7d">7d</button>
+        <button type="button" data-preset="30d">30d</button>
+        <button type="button" data-preset="90d">90d</button>
+        <button type="button" data-preset="all" class="active">All</button>
+      </div>
+      <div class="group">
+        <label for="from-date">From</label>
+        <input id="from-date" type="date" />
+        <label for="to-date">To</label>
+        <input id="to-date" type="date" />
+      </div>
+      <div class="group">
+        <button id="apply-custom" type="button">Apply</button>
+        <button id="reset-filter" type="button">Reset</button>
+      </div>
+    </section>
+    <div class="filter-badges">
+      <span id="badge-range" class="badge primary">Range: all-time</span>
+      <span id="badge-count" class="badge">Records: 0</span>
+      <span id="badge-missing" class="badge warn" style="display:none;">Missing time rows excluded: 0</span>
+    </div>
+    <div class="grid">
+        <section class="panel"><h2>Engagement Drop-Off Distribution</h2><div id="chart-a" class="chart"></div><p class="summary">0.0% of evaluators (0) never engaged with any tools (downloaded/installed only). Among the 1,340 who did use tools, 498 stopped within 1 minute, and 660 stopped within 1 hour, revealing where the evaluation experience loses engagement.</p></section>
+    </div>
+    <script>
+        function unixToDateInput(ts) {
+      if (ts == null) return "";
+      const d = new Date(ts * 1000);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(d.getUTCDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function dateInputToUnixStart(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T00:00:00Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function dateInputToUnixEnd(v) {
+      if (!v) return null;
+      const d = new Date(`${v}T23:59:59Z`);
+      if (Number.isNaN(d.getTime())) return null;
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    function prettyRange(fromUnix, toUnix) {
+      if (fromUnix == null && toUnix == null) return "all-time";
+      const f = fromUnix == null ? "-inf" : unixToDateInput(fromUnix);
+      const t = toUnix == null ? "+inf" : unixToDateInput(toUnix);
+      return `${f} to ${t}`;
+    }
+
+    function overlap(start, end, fromUnix, toUnix) {
+      const left = fromUnix == null ? -1e18 : fromUnix;
+      const right = toUnix == null ? 1e18 : toUnix;
+      return end >= left && start <= right;
+    }
+
+    function presetRange(preset) {
+      if (preset === "all") return { fromUnix: null, toUnix: null };
+      const now = Math.floor(Date.now() / 1000);
+      if (preset === "7d") return { fromUnix: now - (7 * 86400), toUnix: now };
+      if (preset === "30d") return { fromUnix: now - (30 * 86400), toUnix: now };
+      if (preset === "90d") return { fromUnix: now - (90 * 86400), toUnix: now };
+      return { fromUnix: null, toUnix: null };
+    }
+
+    function initDateFilter(records, onFiltered) {
+      const fromInput = document.getElementById("from-date");
+      const toInput = document.getElementById("to-date");
+      const applyBtn = document.getElementById("apply-custom");
+      const resetBtn = document.getElementById("reset-filter");
+      const presetBtns = Array.from(document.querySelectorAll("button[data-preset]"));
+      const badgeRange = document.getElementById("badge-range");
+      const badgeCount = document.getElementById("badge-count");
+      const badgeMissing = document.getElementById("badge-missing");
+
+      function setActivePreset(preset) {
+        presetBtns.forEach((btn) => {
+          if (btn.dataset.preset === preset) btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+      }
+
+      function run(fromUnix, toUnix, sourcePreset) {
+        const bounded = !(fromUnix == null && toUnix == null);
+        let missing = 0;
+        const out = [];
+        for (const r of records) {
+          const s = r.eval_start_unix;
+          const e = r.eval_end_unix;
+          if (s == null || e == null) {
+            missing += 1;
+            if (!bounded) out.push(r);
+            continue;
+          }
+          if (overlap(s, e, fromUnix, toUnix)) out.push(r);
+        }
+
+        badgeRange.textContent = `Range: ${prettyRange(fromUnix, toUnix)}`;
+        badgeCount.textContent = `Records: ${out.length} of ${records.length}`;
+        if (bounded) {
+          badgeMissing.style.display = "inline-block";
+          badgeMissing.textContent = `Missing time rows excluded: ${missing}`;
+        } else {
+          badgeMissing.style.display = "none";
+        }
+
+        if (sourcePreset) {
+          setActivePreset(sourcePreset);
+          if (sourcePreset !== "all") {
+            fromInput.value = unixToDateInput(fromUnix);
+            toInput.value = unixToDateInput(toUnix);
+          }
+        } else {
+          setActivePreset("");
+        }
+
+        onFiltered(out, { fromUnix, toUnix, missing });
+      }
+
+      presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const preset = btn.dataset.preset || "all";
+          const range = presetRange(preset);
+          run(range.fromUnix, range.toUnix, preset);
+        });
+      });
+
+      applyBtn.addEventListener("click", () => {
+        const fromUnix = dateInputToUnixStart(fromInput.value);
+        const toUnix = dateInputToUnixEnd(toInput.value);
+        run(fromUnix, toUnix, null);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        fromInput.value = "";
+        toInput.value = "";
+        run(null, null, "all");
+      });
+
+      run(null, null, "all");
+    }
+        vegaEmbed("#chart-a", {"$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "width": "container", "height": 400, "title": "Evaluators by Engagement Duration (How quickly they stopped)", "data": {"values": [{"bucket": "< 1 minute", "count": 498, "percentage": 37.16}, {"bucket": "< 10 minutes", "count": 61, "percentage": 4.55}, {"bucket": "< 1 hour", "count": 101, "percentage": 7.54}, {"bucket": "< 1 day", "count": 168, "percentage": 12.54}, {"bucket": "< 1 week", "count": 139, "percentage": 10.37}, {"bucket": "< 1 month", "count": 138, "percentage": 10.3}, {"bucket": "1+ month", "count": 235, "percentage": 17.54}]}, "mark": {"type": "bar", "color": "#1f77b4", "cornerRadiusTopRight": 4, "cornerRadiusBottomRight": 4}, "encoding": {"y": {"field": "bucket", "type": "nominal", "sort": ["No tool engagement", "< 1 minute", "< 10 minutes", "< 1 hour", "< 1 day", "< 1 week", "< 1 month", "1+ month"], "title": null}, "x": {"field": "count", "type": "quantitative", "title": "Number of Evaluators"}, "tooltip": [{"field": "bucket", "title": "Drop-Off Bucket"}, {"field": "count", "title": "Evaluators"}, {"field": "percentage", "title": "Percentage", "format": ".2f"}]}}, {"actions": false});
+        
+    </script>
+</body>
+</html>
